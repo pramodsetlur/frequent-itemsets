@@ -38,28 +38,44 @@ k = 2
 
 
 import sys
-import itertools
 
-frequent_item_list = {}
+frequent_item_list = []
+support = 0
+bucket_size = 0
 
 #Function to generate singleton frequent item set
-def compute_singleton_set(transaction):
+def compute_singleton_set(singleton_dict, transaction):
+
     transaction_items = transaction.strip().split(',')
 
     for transaction in transaction_items:
-        frequent_item_list.setdefault(transaction, 1)
-        count = frequent_item_list.get(transaction)
+        singleton_dict.setdefault(transaction, 1)
+        count = singleton_dict.get(transaction)
         count = count + 1
-        frequent_item_list[transaction] = count
+        singleton_dict[transaction] = count
+    return singleton_dict
 
-def compute_frequent_sets_pcy(input_file, support, bucket_size):
+def compute_frequent_singleton_set(input_file):
     #Converting command line params to integers from string
-    support = int(support)
-    bucket_size = int(bucket_size)
 
-    for transaction in open(input_file):
-        compute_singleton_set(transaction)
+    #Computing the count of singleton items
+    singleton_dict = {}
+    with open(input_file) as file:
+        for transaction in file:
+            singleton_dict = compute_singleton_set(singleton_dict, transaction)
+
+    #Computing frequent singleton item
+    for item, count in singleton_dict.iteritems():
+        if count >= support:
+            frequent_item_list.append(item)
+
+    #print the frequent singleton itemset
+    frequent_item_list.sort()
     print frequent_item_list
+
+    file.close()
+
+
 
 if __name__ == '__main__':
     if 4 != len(sys.argv):
@@ -69,4 +85,7 @@ if __name__ == '__main__':
         support = sys.argv[2]
         bucket_size = sys.argv[3]
 
-        compute_frequent_sets_pcy(input_file, support, bucket_size)
+        support = int(support)
+        bucket_size = int(bucket_size)
+
+        compute_frequent_singleton_set(input_file)
