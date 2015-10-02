@@ -102,6 +102,28 @@ def compute_hash(input_file, k):
     return (hash_bucket, bit_map)
     file.close()
 
+def compute_candidate_item_sets(input_file, bit_map, k):
+    candidate_item_set = []
+    with open(input_file) as file:
+        for transaction in file:
+            list_transaction = transaction.strip().split(',')
+            subset_k = itertools.combinations(list_transaction, k)
+            subset_k_list = list(subset_k)
+
+            for each_subset in subset_k_list:
+                subset_k_1_list = list(itertools.combinations(each_subset, k-1))
+                flag = 1
+                for item in subset_k_1_list:
+                    #Check if the item is present in FIL (whose item sizes should also be k-1)
+                    if item not in frequent_item_list:
+                        flag = 0
+                if flag == 1:
+                    bucket_number = hash(item) % 20
+                    if(1 == bit_map[bucket_number]):
+                        candidate_item_set.append(item)
+
+    print candidate_item_set
+    file.close()
 
 if __name__ == '__main__':
     if 4 != len(sys.argv):
@@ -116,6 +138,6 @@ if __name__ == '__main__':
 
         compute_frequent_singleton_set(input_file)
 
-        k = 2
+        k = 3
         hash_bucket, bit_map = compute_hash(input_file, k)
-        
+        compute_candidate_item_sets(input_file, bit_map, k)
