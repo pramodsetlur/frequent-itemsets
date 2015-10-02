@@ -38,6 +38,7 @@ k = 2
 
 
 import sys
+import itertools
 
 frequent_item_list = []
 support = 0
@@ -76,6 +77,31 @@ def compute_frequent_singleton_set(input_file):
     file.close()
 
 
+def compute_hash(input_file, k):
+    bit_map = [0] * bucket_size
+    hash_bucket = {}
+    with open(input_file) as file:
+        for transaction in file:
+            list_transaction = transaction.strip().split(',')
+            subsets_k = itertools.combinations(list_transaction,  k)
+            subset_k_list =  list(subsets_k)
+
+            for each_subset in subset_k_list:
+                bucket_number = hash(each_subset) % bucket_size
+                hash_bucket.setdefault(bucket_number, 1)
+                count = hash_bucket[bucket_number]
+                count = count + 1
+                hash_bucket[bucket_number] = count
+
+    for bucket_num, count in hash_bucket.iteritems():
+        if count >= support:
+            bit_map.insert(bucket_num, 1)
+        else:
+            bit_map.insert(bucket_num, 0)
+
+    return (hash_bucket, bit_map)
+    file.close()
+
 
 if __name__ == '__main__':
     if 4 != len(sys.argv):
@@ -89,3 +115,7 @@ if __name__ == '__main__':
         bucket_size = int(bucket_size)
 
         compute_frequent_singleton_set(input_file)
+
+        k = 2
+        hash_bucket, bit_map = compute_hash(input_file, k)
+        
