@@ -76,18 +76,24 @@ def compute_frequent_singleton_set(input_file):
 
     file.close()
 
+def generate_hash_value(each_subset):
+    length = len(each_subset)
+    total = 0
+    for i in range(length):
+        total += hash(each_subset[i])
 
-def compute_hash(input_file, k):
-    bit_map = [0] * bucket_size
-    hash_bucket = {}
+    return total % bucket_size
+
+def compute_hash(hash_bucket, input_file, k):
+    bit_map = [0]
     with open(input_file) as file:
         for transaction in file:
             list_transaction = transaction.strip().split(',')
             subsets_k = itertools.combinations(list_transaction,  k)
-            subset_k_list =  list(subsets_k)
+            subset_k_list = list(subsets_k)
 
             for each_subset in subset_k_list:
-                bucket_number = hash(each_subset) % bucket_size
+                bucket_number = generate_hash_value(each_subset)
                 hash_bucket.setdefault(bucket_number, 1)
                 count = hash_bucket[bucket_number]
                 count = count + 1
@@ -115,15 +121,19 @@ def compute_candidate_item_sets(input_file, bit_map, k):
                 flag = 1
                 for item in subset_k_1_list:
                     #Check if the item is present in FIL (whose item sizes should also be k-1)
-                    if item not in frequent_item_list:
-                        flag = 0
-                if flag == 1:
-                    bucket_number = hash(item) % 20
-                    if(1 == bit_map[bucket_number]):
-                        candidate_item_set.append(item)
+                    length = len(item)
+                    for i in range(length):
+                        if item[i] not in frequent_item_list:
+                            flag = 0
 
-    print candidate_item_set
+                if flag == 1:
+                    bucket_number = generate_hash_value(each_subset)
+                    if(1 == bit_map[bucket_number]):
+                        if each_subset not in candidate_item_set:
+                            candidate_item_set.append(each_subset)
+
     file.close()
+    return candidate_item_set
 
 if __name__ == '__main__':
     if 4 != len(sys.argv):
@@ -138,6 +148,14 @@ if __name__ == '__main__':
 
         compute_frequent_singleton_set(input_file)
 
-        k = 3
-        hash_bucket, bit_map = compute_hash(input_file, k)
-        compute_candidate_item_sets(input_file, bit_map, k)
+        k = 2
+
+        #initializing the bucket
+        hash_bucket = {}
+        for i in range(bucket_size):
+            hash_bucket[i] = 0
+
+        hash_bucket, bit_map = compute_hash(hash_bucket, input_file, k)
+        print hash_bucket
+        candidate_item_set = compute_candidate_item_sets(input_file, bit_map, k)
+        compute_frequent_item_sets(input_file, candidate_item_set)
