@@ -1,4 +1,4 @@
 b,a,c,d
 b,a,d
-b,c
+b,c,a
 d,a,b,c

@@ -171,12 +171,19 @@ def compute_candidate_item_sets(input_file, bit_map, k):
                 flag = 1
                 for item in subset_k_1_list:
                     #Check if the item is present in FIL (whose item sizes should also be k-1)
+
                     length = len(item)
-                    for i in range(length):
-                        #print "single items in the above subset of k-1: ", item[i]
-                        if item[i] not in frequent_item_list:
-                            #print item[i], " is not in the frequent item set"
+                    if(1 == length):
+                        for i in range(length):
+                            #print "single items in the above subset of k-1: ", item[i]
+                            if item[i] not in frequent_item_list:
+                                #print item[i], " is not in the frequent item set"
+                                flag = 0
+                    else:
+                        if list(item) not in frequent_item_list:
+                            #print list(item), " is not in the frequent item set"
                             flag = 0
+
 
                 if flag == 1:
                     #print "all of the elements in ", each_subset, " is in the frequent list"
@@ -204,21 +211,24 @@ if __name__ == '__main__':
         #initial setup
         compute_frequent_singleton_set(input_file)
 
-        k = 2
+        k = 1
 
-        #initializing the bucket
-        hash_bucket = {}
-        bit_map = [0]
-        for i in range(bucket_size):
-            hash_bucket[i] = 0
+        while 0 != len(frequent_item_list):
+            #initializing the bucket
+            #print "length of the frequent item set: ", len(frequent_item_list)
+            hash_bucket = {}
+            bit_map = [0]
+            for i in range(bucket_size):
+                hash_bucket[i] = 0
 
-        #print "Hash bucket after initializing to 0: ", hash_bucket
+            k += 1
 
-        hash_bucket, bit_map = compute_hash(hash_bucket, bit_map, input_file, k)
+            #print "Hash bucket after initializing to 0: ", hash_bucket
 
-        candidate_item_set = compute_candidate_item_sets(input_file, bit_map, k)
-        frequent_item_list = compute_frequent_item_sets(input_file, candidate_item_set, k)
+            hash_bucket, bit_map = compute_hash(hash_bucket, bit_map, input_file, k)
+            candidate_item_set = compute_candidate_item_sets(input_file, bit_map, k)
+            frequent_item_list = compute_frequent_item_sets(input_file, candidate_item_set, k)
 
-        if 0 != len(hash_bucket):
-            print "\n", hash_bucket
-            print frequent_item_list
+            if 0 != len(frequent_item_list):
+                print "\n", hash_bucket
+                print frequent_item_list
