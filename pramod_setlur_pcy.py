@@ -117,24 +117,24 @@ def compute_hash(hash_bucket, bit_map, input_file, k):
     file.close()
 
 def compute_frequent_item_sets(input_file, candidate_item_sets, k):
-    print "\n****Frequent item sets calculation***\n"
+    #print "\n****Frequent item sets calculation***\n"
     candidate_dictionary = {}
     with open(input_file) as file:
         for transaction in file:
             list_transaction = transaction.strip().split(',')
             list_transaction.sort()
-            print "line being processed: ",
+            #print "line being processed: ",
 
             subset_k = itertools.combinations(list_transaction, k)
             subset_k_list = list(subset_k)
-            print "all subsets of the above line: ", subset_k_list
+            #print "all subsets of the above line: ", subset_k_list
 
             for each_subset in subset_k_list:
                 if each_subset in candidate_item_set:
                     candidate_dictionary.setdefault(each_subset, 0)
                     count = candidate_dictionary.get(each_subset)
                     count += 1
-                    print each_subset, " is now appearing for the ", count, " time"
+                    #print each_subset, " is now appearing for the ", count, " time"
                     candidate_dictionary[each_subset] = count
 
         frequent_item_list = []
@@ -142,51 +142,52 @@ def compute_frequent_item_sets(input_file, candidate_item_sets, k):
         for candidate_set, count in candidate_dictionary.iteritems():
             if count >= support:
                 if candidate_item_set not in frequent_item_list:
-                    frequent_item_list.append(candidate_set)
+                    frequent_item_list.append(list(candidate_set))
 
     file.close()
-    print "Frequent item list: ", frequent_item_list
+    #print "Frequent item list: ", frequent_item_list
+    frequent_item_list.sort()
     return frequent_item_list
 
 
 
 def compute_candidate_item_sets(input_file, bit_map, k):
-    print "\n****Candidate pairs****\n"
+    #print "\n****Candidate pairs****\n"
     candidate_item_set = []
     with open(input_file) as file:
         for transaction in file:
             list_transaction = transaction.strip().split(',')
             list_transaction.sort()
 
-            print "line being processed: ", list_transaction
+            #print "line being processed: ", list_transaction
             subset_k = itertools.combinations(list_transaction, k)
             subset_k_list = list(subset_k)
 
-            print "subsets of the above line: ", subset_k_list
+            #print "subsets of the above line: ", subset_k_list
 
             for each_subset in subset_k_list:
                 subset_k_1_list = list(itertools.combinations(each_subset, k-1))
-                print "subsets of k-1 length: ", subset_k_1_list
+                #print "subsets of k-1 length: ", subset_k_1_list
                 flag = 1
                 for item in subset_k_1_list:
                     #Check if the item is present in FIL (whose item sizes should also be k-1)
                     length = len(item)
                     for i in range(length):
-                        print "single items in the above subset of k-1: ", item[i]
+                        #print "single items in the above subset of k-1: ", item[i]
                         if item[i] not in frequent_item_list:
-                            print item[i], " is not in the frequent item set"
+                            #print item[i], " is not in the frequent item set"
                             flag = 0
 
                 if flag == 1:
-                    print "all of the elements in ", each_subset, " is in the frequent list"
+                    #print "all of the elements in ", each_subset, " is in the frequent list"
                     bucket_number = generate_hash_value(each_subset)
-                    print each_subset, "hashes to bucker number: ", bucket_number
+                    #print each_subset, "hashes to bucker number: ", bucket_number
                     if(1 == bit_map[bucket_number]):
                         if each_subset not in candidate_item_set:
                             candidate_item_set.append(each_subset)
 
     file.close()
-    print "Final Candidate pairs: ", candidate_item_set
+    #print "Final Candidate pairs: ", candidate_item_set
     return candidate_item_set
 
 if __name__ == '__main__':
@@ -217,7 +218,7 @@ if __name__ == '__main__':
 
         print "\n"
         print hash_bucket
-        
+
         candidate_item_set = compute_candidate_item_sets(input_file, bit_map, k)
         frequent_item_list = compute_frequent_item_sets(input_file, candidate_item_set, k)
-        #print frequent_item_list
+        print frequent_item_list
