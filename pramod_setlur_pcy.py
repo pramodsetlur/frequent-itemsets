@@ -216,9 +216,9 @@ if __name__ == '__main__':
 
         hash_bucket, bit_map = compute_hash(hash_bucket, bit_map, input_file, k)
 
-        print "\n"
-        print hash_bucket
-
         candidate_item_set = compute_candidate_item_sets(input_file, bit_map, k)
         frequent_item_list = compute_frequent_item_sets(input_file, candidate_item_set, k)
-        print frequent_item_list
+
+        if 0 != len(hash_bucket):
+            print "\n", hash_bucket
+            print frequent_item_list
