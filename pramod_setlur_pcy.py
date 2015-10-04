@@ -5,34 +5,35 @@ _________________
 1. Initial setup
     a. Generating the Frequent Item List of size 1 - FIL
 
-k = 2
-2. Hashing
-    a. For all baskets:
-        Read single basket
-        generate all subsets of size k
-        Hash them
-    b. Create a bit map of the hash above
+k = 1
+while there are items in Frequent Item List
+    k++
+    2. Hashing
+        a. For all baskets:
+            Read single basket
+            generate all subsets of size k
+            Hash them
+        b. Create a bit map of the hash above
 
-3. Generating the candiadate set
-    a. For all baskets:
-        Read basket
-        Generate all subsets of size k
-        For each item in the above subset:
-            Generate a subset of k-1 size
+    3. Generating the candiadate set
+        a. For all baskets:
+            Read basket
+            Generate all subsets of size k
+            For each item in the above subset:
+                Generate a subset of k-1 size
+                For each item in the subset:
+                    See if it is present in the FIL
+                Check if item hashes to a frequent bucket
+                Add it into the Candidate item set
+
+    4. Generating the frequent item set
+        a. For all baskets:
+            Generate subset of size k
             For each item in the subset:
-                See if it is present in the FIL
-            Check if item hashes to a frequent bucket
-            Add it into the Candidate item set
-
-4. Generating the frequent item set
-    a. For all baskets:
-        Generate subset of size k
-        For each item in the subset:
-            Check if it is present in the candidate item set
-            Add it to the Candidate Dictionary with incrementing the count
-    c. Clear FIL
-    d. Iterate through the Candidate dictionary and check if the count is more than the support. Add it to FIL
-    e. k++
+                Check if it is present in the candidate item set
+                Add it to the Candidate Dictionary with incrementing the count
+        c. Clear FIL
+        d. Iterate through the Candidate dictionary and check if the count is more than the support. Add it to FIL
 '''
 
 
