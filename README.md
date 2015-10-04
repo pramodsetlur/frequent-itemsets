@@ -7,8 +7,9 @@ USAGE: $ python pramod_setlur_<ALGO_NAME>.py [INPUT_FILE] [SUPPORT_THRESHOLD] [H
 Eg: $ python pramod_setlur_pcy.py data/input.txt 4 20
 
 ##PCY (Park-Chen-Yu) Algorithm
-The PCY algorith is an extension of the apriori algorithm. This provides a better utilization of memory by hashing. The candidate pairs is reduced to a drastic amount using this method.
+The PCY algorithm is an extension of the apriori algorithm. This provides a better utilization of memory by hashing. The candidate pairs is reduced to a drastic amount using this method.
 
 Link to standford's PPT of PCY algorithm: http://infolab.stanford.edu/~ullman/mining/pdf/assoc-rules2.pdf
 
 ##Minhash Algorithm
+[WIP]
