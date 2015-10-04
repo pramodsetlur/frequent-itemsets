@@ -174,6 +174,8 @@ def compute_candidate_item_sets(input_file, bit_map, k):
                     #Check if the item is present in FIL (whose item sizes should also be k-1)
 
                     length = len(item)
+
+                    #Will have to iterate the subset of k-1 if k = 2. A comma gets appended in the last. Which is why iterating it separately. if Not just check if the entire subset of k-1 is there in FIL
                     if(1 == length):
                         for i in range(length):
                             #print "single items in the above subset of k-1: ", item[i]
