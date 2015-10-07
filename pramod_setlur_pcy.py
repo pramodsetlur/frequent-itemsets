@@ -202,7 +202,7 @@ def compute_candidate_item_sets(input_file, bit_map, k):
 
 if __name__ == '__main__':
     if 4 != len(sys.argv):
-        print "Usage: python pramod_setlur_pcy.py [input.txt] [support] [hash_bucket_size]"
+        print "Usage: $ python python pramod_setlur_pcy.py [input.txt] [support] [hash_bucket_size]"
     else:
         input_file = sys.argv[1]
         support = sys.argv[2]
