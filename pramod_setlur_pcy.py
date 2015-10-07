@@ -131,7 +131,7 @@ def compute_frequent_item_sets(input_file, candidate_item_sets, k):
             #print "all subsets of the above line: ", subset_k_list
 
             for each_subset in subset_k_list:
-                if each_subset in candidate_item_set:
+                if each_subset in candidate_item_sets:
                     candidate_dictionary.setdefault(each_subset, 0)
                     count = candidate_dictionary.get(each_subset)
                     count += 1
