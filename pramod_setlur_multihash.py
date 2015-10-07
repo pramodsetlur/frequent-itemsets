@@ -3,6 +3,16 @@ Algorithm for Multihash
 _______________________
 
 1. Create a frequent item set of size 1
+2. While there are more items in frequent itemsets
+    #Generating hash
+    Compute hash_bucket1 and hash_bucket2
+    Compute bit_map1 and bit_map2
+
+    #Generating candidate item sets
+    If each subset maps to a bitmap with 1 in both bitmaps 1 and 2
+        consider it as a candidate itemset
+
+    Generate Frequent itemsets using the above candidate itemsets
 
 '''
 import sys
