@@ -17,21 +17,34 @@ scaled_support = support * sample_percentage * 0.8
 
 
 def update_scaled_support(support):
+    global scaled_support
     scaled_support = support * sample_percentage * 0.8
 
 
+def get_total_number_of_lines(input_file):
+    with open(input_file) as file:
+        number_of_lines = sum(1 for line in file)
+    file.close()
+    return number_of_lines
+
+
+def get_random_line_numbers(number_of_lines):
+    sample_lines_required = number_of_lines * sample_percentage
+    sample_lines_required = int(math.floor(sample_lines_required))
+    random_line_numbers = random.sample(range(1, number_of_lines), sample_lines_required)
+    return random_line_numbers
+
 def generate_random_sample(input_file, sample_percentage):
     random_sample = []
+    number_of_lines = get_total_number_of_lines(input_file)
+    random_line_numbers = get_random_line_numbers(number_of_lines)
+
+    line_number = 1
     with open(input_file) as file:
         for transaction in file:
             list_transaction = transaction.strip().split(',')
-
-            k = len(list_transaction) * sample_percentage
-            k = int(math.floor(k))
-
-            intermediate_random_set = random.sample(list_transaction, k)
-            random_sample.append(intermediate_random_set)
-
+            if line_number in random_line_numbers:
+                random_sample.append(list_transaction)
     file.close()
     return random_sample
 
