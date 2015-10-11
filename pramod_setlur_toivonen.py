@@ -22,7 +22,7 @@ import math
 support = 0
 bucket_size = 0
 
-sample_percentage = 0.5
+sample_percentage = 0.3
 scaled_support = support * sample_percentage * 0.8
 
 
@@ -68,16 +68,22 @@ def generate_singleton(list):
     singleton.sort()
     return singleton
 
-def generate_combinations_k_random_data(random_sample_data, k):
-    combination_random_list = []
-    for each_transaction in random_sample_data:
-        each_transaction_combinations = itertools.combinations(each_transaction, k)
-        for each_combination in each_transaction_combinations:
-            if each_combination not in combination_random_list:
-                combination_random_list.append(each_combination)
+def generate_k_combinations(data, k):
+    combination_list = []
+    for each_transaction in data:
+        each_transaction_combinations = list(itertools.combinations(each_transaction, k))
+        if 1 == k:
+            for each_combination in each_transaction_combinations:
+                for element in each_combination:
+                    if element not in combination_list:
+                        combination_list.append(element)
+        else:
+            for each_combination in each_transaction_combinations:
+                if each_combination not in combination_list:
+                    combination_list.append(each_combination)
 
-    combination_random_list.sort()
-    return combination_random_list
+    combination_list.sort()
+    return combination_list
 
 
 def generate_ck_dictionary(random_sample_data, lk_1_list, k):
@@ -91,7 +97,7 @@ def generate_ck_dictionary(random_sample_data, lk_1_list, k):
                 ck_dictionary[each_item] = count
 
     if 2 == k:
-        combinations_random_list = generate_combinations_k_random_data(random_sample_data, k)
+        combinations_random_list = generate_k_combinations(random_sample_data, k)
         for each_transaction in combinations_random_list:
             ck_dictionary.setdefault(each_transaction, 0)
             count = ck_dictionary.get(each_transaction)
@@ -101,7 +107,7 @@ def generate_ck_dictionary(random_sample_data, lk_1_list, k):
     if k >= 3:
         combinations_random_list = generate_ck_dictionary(random_sample_data, k)
         for each_combination in combinations_random_list:
-            subset_k_1 = itertools.combinations(each_combination, k-1)
+            subset_k_1 = list(itertools.combinations(each_combination, k-1))
             flag = 1
             for each_subset in subset_k_1:
                 if each_subset not in lk_1_list:
@@ -114,25 +120,78 @@ def generate_ck_dictionary(random_sample_data, lk_1_list, k):
 
     return ck_dictionary
 
-def generate_lk_list(ck_dictionary):
+def generate_frequent_list(ck_dictionary, support):
     lk_list = []
     for item, count in ck_dictionary.iteritems():
-        if count > scaled_support:
+        if count > support:
             if item not in lk_list:
                 lk_list.append(item)
     lk_list.sort()
     return lk_list
 
 
-def generate_nbl_list(ck_dictionary, lk_list, k):
+def generate_nbl_list(ck_list, lk_list, k):
+    nbl_temp_list = []
+    nbl_list = []
+    for each_item in ck_list:
+        if each_item not in lk_list:
+            nbl_temp_list.append(each_item)
     if 1 == k:
-
-
-    for each_item in lk_list:
-
+        nbl_list = nbl_temp_list
+    else:
+        for each_item in nbl_temp_list:
+            subset_nbl_list = list(itertools.combinations(nbl_temp_list,k))
+            flag = 1
+            for each_subset in subset_nbl_list:
+                if each_subset not in lk_list:
+                    flag = 0
+            if 1 == flag:
+                nbl_list.append(each_item)
+    return nbl_list
 
 def generate_ck_list_from_dictionary(ck_dictionary):
+    ck_list = []
+    for key, value in ck_dictionary.iteritems():
+        ck_list.append(key)
+    ck_list.sort()
+    return ck_list
 
+
+def convert_file_to_list(input_file):
+    full_file_list = []
+    with open(input_file) as file:
+        for each_line in file:
+            list_line = each_line.strip().split(',')
+            full_file_list.append(list(list_line))
+    file.close()
+    return full_file_list
+
+def generate_candidate_dictionary_full_file(input_file, nbl_list, lk_list, k):
+    candidate_dictionary = {}
+    with open(input_file) as file:
+        for each_transaction in file:
+            list_each_transaction = each_transaction.strip().split(',')
+            each_transaction_combinations = list(itertools.combinations(list_each_transaction, k))
+            if 1 == k:
+                temp_each_transaction_combination = []
+                for element in each_transaction_combinations:
+                    temp_each_transaction_combination.append(element[0])
+                each_transaction_combinations = temp_each_transaction_combination
+
+            for each_combination in each_transaction_combinations:
+                if each_combination in nbl_list or each_combination in lk_list:
+                    candidate_dictionary.setdefault(each_combination, 0)
+                    count = candidate_dictionary.get(each_combination)
+                    count += 1
+                    candidate_dictionary[each_combination] = count
+    return candidate_dictionary
+    file.close()
+
+def generate_final_check_frequent_list(frequent_list_full_file, nbl_list):
+    for each_frequent_item_set in frequent_list_full_file:
+        if each_frequent_item_set in nbl_list:
+            return False
+    return True
 
 if __name__ == '__main__':
     if 3 != len(sys.argv):
@@ -143,12 +202,44 @@ if __name__ == '__main__':
 
         update_scaled_support(support)
 
-        k = 1
-        random_sample_data = generate_random_sample(input_file)
-        if 1 == k:
-            lk_1_list = random_sample_data
-        ck_dictionary = generate_ck_dictionary(random_sample_data, lk_1_list, k)
-        lk_list = generate_lk_list(ck_dictionary)
-        ck_list = generate_ck_list_from_dictionary(ck_dictionary)
-        #print lk_list
-        nbl_list = generate_nbl_list(ck_dictionary, lk_list, k)
+        print "support: ", support, "\n"
+        print "scaled support", scaled_support, "\n"
+
+        result = False
+        while (False == result):
+            k = 1
+            random_sample_data = generate_random_sample(input_file)
+            print "Random Sample Data: ", random_sample_data, "\n"
+            if 1 == k:
+                lk_1_list = random_sample_data
+
+            #Pass 1: with Random Sampled data
+
+            ck_dictionary = generate_ck_dictionary(random_sample_data, lk_1_list, k)
+            print "ck-dictionary: ", ck_dictionary, "\n"
+
+            ck_list = generate_ck_list_from_dictionary(ck_dictionary)
+            print "ck_list: ", ck_list, "\n"
+
+            lk_list = generate_frequent_list(ck_dictionary, scaled_support)
+            print "lk_list: ", lk_list, "\n"
+
+            nbl_list = generate_nbl_list(ck_dictionary, lk_list, k)
+            print "nbl_list:", nbl_list, "\n"
+
+            #Pass 2: Checking with the actual file
+
+
+            full_file_list = convert_file_to_list(input_file)
+            print "File as a list: ", full_file_list, "\n"
+
+            candidate_dictionary_item_sets_full_file = generate_candidate_dictionary_full_file(input_file, nbl_list, lk_list, k)
+            print "Candidate Dictionary Full File: ", candidate_dictionary_item_sets_full_file, "\n"
+
+            frequent_list_full_file = generate_frequent_list(candidate_dictionary_item_sets_full_file, support)
+            print "Frequent item set full file: ", frequent_list_full_file, "\n"
+
+            result = generate_final_check_frequent_list(frequent_list_full_file, nbl_list)
+            print "Result: ", result
+
+        print lk_list
