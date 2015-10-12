@@ -106,7 +106,7 @@ def generate_ck_dictionary(random_sample_data, lk_1_list, k):
                 ck_dictionary[each_transaction] = count
 
     if k >= 3:
-        combinations_random_list = generate_ck_dictionary(random_sample_data, k)
+        combinations_random_list = generate_k_combinations(random_sample_data, k)
         for each_combination in combinations_random_list:
             subset_k_1 = list(itertools.combinations(each_combination, k-1))
             flag = 1
@@ -124,7 +124,7 @@ def generate_ck_dictionary(random_sample_data, lk_1_list, k):
 def generate_frequent_list(ck_dictionary, support):
     lk_list = []
     for item, count in ck_dictionary.iteritems():
-        if count > support:
+        if count >= support:
             if item not in lk_list:
                 lk_list.append(item)
     lk_list.sort()
@@ -250,6 +250,8 @@ def generate_toivonen(input_file):
             lk_1_list = []
             ultimate_frequent_list = []
 
+    return ultimate_frequent_list
+
 
 if __name__ == '__main__':
     if 3 != len(sys.argv):
@@ -263,5 +265,6 @@ if __name__ == '__main__':
         print "support: ", support, "\n"
         print "scaled support", scaled_support, "\n"
 
-        generate_toivonen(input_file)
+        ultimate_frequent_list  = generate_toivonen(input_file)
+        print "Ultimate Frequent List: \n", ultimate_frequent_list
 
