@@ -15,4 +15,9 @@ The PCY algorithm is an extension of the apriori algorithm. This provides a bett
 Item sets can be concluded as candidate itemsets if they can hash into a frequent bucket when they are hashed into a frequent bucket when all the hash functions are applied. This algorithm uses 2 hash functions
 
 ##Toivonen's Algortihm
-[WIP]
+Toivonen has proven to be more successful in finding frequent itemsets. It first finds the frequent itemsets in a sample and verifies it against the whole data set. 
+
+A slight modification to execute this program:
+USAGE: $ python pramod_setlur_<ALGO_NAME>.py [INPUT_FILE] [SUPPORT_THRESHOLD]
+
+Eg: $ python pramod_setlur_toivonen.py data/input1.txt 20
