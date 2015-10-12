@@ -200,12 +200,14 @@ def check_frequent_list_nbl(frequent_list_full_file, nbl_list):
 
 
 def generate_toivonen(input_file):
+    iterations = 1
     ultimate_frequent_list = []
     lk_1_list = []
     resample = True
     k = 1
     while 0 != len(lk_1_list) or 1 == k:
         if resample:
+            iterations += 1
             random_sample_data = generate_random_sample(input_file)
             #print "Random Sample Data: ", random_sample_data, "\n"
         if 1 == k:
@@ -250,8 +252,25 @@ def generate_toivonen(input_file):
             lk_1_list = []
             ultimate_frequent_list = []
 
-    return ultimate_frequent_list
+    return iterations, ultimate_frequent_list
 
+def format_ultimate_frequent_list(ultimate_frequent_list):
+    formatted_list = []
+    for each_set_size in ultimate_frequent_list:
+        temp_list = []
+        for each_item in each_set_size:
+            temp_list.append(list(each_item))
+
+        if 0 != len(temp_list):
+            formatted_list.append(temp_list)
+    return formatted_list
+
+def print_output(iterations, ultimate_frequent_list):
+    print iterations
+    print sample_percentage
+    formatted_frequent_list = format_ultimate_frequent_list(ultimate_frequent_list)
+    for each_list in formatted_frequent_list:
+        print each_list, "\n"
 
 if __name__ == '__main__':
     if 3 != len(sys.argv):
@@ -265,6 +284,7 @@ if __name__ == '__main__':
         #print "support: ", support, "\n"
         #print "scaled support", scaled_support, "\n"
 
-        ultimate_frequent_list  = generate_toivonen(input_file)
-        print "Ultimate Frequent List: \n", ultimate_frequent_list
+        iterations, ultimate_frequent_list  = generate_toivonen(input_file)
+        #print "Ultimate Frequent List: \n", ultimate_frequent_list
 
+        print_output(iterations, ultimate_frequent_list)
