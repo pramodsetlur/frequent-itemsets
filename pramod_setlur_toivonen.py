@@ -206,40 +206,39 @@ def generate_toivonen(input_file):
     k = 1
     while 0 != len(lk_1_list) or 1 == k:
         if resample:
-            k = 1
             random_sample_data = generate_random_sample(input_file)
-            print "Random Sample Data: ", random_sample_data, "\n"
+            #print "Random Sample Data: ", random_sample_data, "\n"
         if 1 == k:
             lk_1_list = random_sample_data
 
         #Pass 1: with Random Sampled data
 
         ck_dictionary = generate_ck_dictionary(random_sample_data, lk_1_list, k)
-        print "ck-dictionary: ", ck_dictionary, "\n"
+        #print "ck-dictionary: ", ck_dictionary, "\n"
 
         ck_list = generate_ck_list_from_dictionary(ck_dictionary)
-        print "ck_list: ", ck_list, "\n"
+        #print "ck_list: ", ck_list, "\n"
 
         lk_list = generate_frequent_list(ck_dictionary, scaled_support)
-        print "lk_list: ", lk_list, "\n"
+        #print "lk_list: ", lk_list, "\n"
 
         nbl_list = generate_nbl_list(ck_list, lk_list, lk_1_list, k)
-        print "nbl_list:", nbl_list, "\n"
+        #print "nbl_list:", nbl_list, "\n"
 
         #Pass 2: Checking with the actual file
 
 
         full_file_list = convert_file_to_list(input_file)
-        print "File as a list: ", full_file_list, "\n"
+        #print "File as a list: ", full_file_list, "\n"
 
         candidate_dictionary_item_sets_full_file = generate_candidate_dictionary_full_file(input_file, nbl_list, lk_list, k)
-        print "Candidate Dictionary Full File: ", candidate_dictionary_item_sets_full_file, "\n"
+        #print "Candidate Dictionary Full File: ", candidate_dictionary_item_sets_full_file, "\n"
 
         frequent_list_full_file = generate_frequent_list(candidate_dictionary_item_sets_full_file, support)
-        print "Frequent item set full file: ", frequent_list_full_file, "\n"
+        #print "Frequent item set full file: ", frequent_list_full_file, "\n"
 
         result = check_frequent_list_nbl(frequent_list_full_file, nbl_list)
-        print "Result: ", result
+        #print "Result: ", result
         resample = not result
 
         ultimate_frequent_list.append(frequent_list_full_file)
@@ -247,6 +246,7 @@ def generate_toivonen(input_file):
         k += 1
 
         if resample:
+            k = 1
             lk_1_list = []
             ultimate_frequent_list = []
 
@@ -262,8 +262,8 @@ if __name__ == '__main__':
 
         update_scaled_support(support)
 
-        print "support: ", support, "\n"
-        print "scaled support", scaled_support, "\n"
+        #print "support: ", support, "\n"
+        #print "scaled support", scaled_support, "\n"
 
         ultimate_frequent_list  = generate_toivonen(input_file)
         print "Ultimate Frequent List: \n", ultimate_frequent_list
